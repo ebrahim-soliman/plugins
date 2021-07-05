@@ -194,12 +194,12 @@
 
 - (void)onCanGoBack:(FlutterMethodCall*)call result:(FlutterResult)result {
   BOOL canGoBack = [_webView canGoBack];
-  result([NSNumber numberWithBool:canGoBack]);
+  result(@(canGoBack));
 }
 
 - (void)onCanGoForward:(FlutterMethodCall*)call result:(FlutterResult)result {
   BOOL canGoForward = [_webView canGoForward];
-  result([NSNumber numberWithBool:canGoForward]);
+  result(@(canGoForward));
 }
 
 - (void)onGoBack:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -314,12 +314,12 @@
 
 - (void)getScrollX:(FlutterMethodCall*)call result:(FlutterResult)result {
   int offsetX = _webView.scrollView.contentOffset.x;
-  result([NSNumber numberWithInt:offsetX]);
+  result(@(offsetX));
 }
 
 - (void)getScrollY:(FlutterMethodCall*)call result:(FlutterResult)result {
   int offsetY = _webView.scrollView.contentOffset.y;
-  result([NSNumber numberWithInt:offsetY]);
+  result(@(offsetY));
 }
 
 // Returns nil when successful, or an error message when one or more keys are unknown.
@@ -391,15 +391,25 @@
     case 0:  // require_user_action_for_all_media_types
       if (@available(iOS 10.0, *)) {
         configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
+      } else if (@available(iOS 9.0, *)) {
+        configuration.requiresUserActionForMediaPlayback = true;
       } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         configuration.mediaPlaybackRequiresUserAction = true;
+#pragma clang diagnostic pop
       }
       break;
     case 1:  // always_allow
       if (@available(iOS 10.0, *)) {
         configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+      } else if (@available(iOS 9.0, *)) {
+        configuration.requiresUserActionForMediaPlayback = false;
       } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         configuration.mediaPlaybackRequiresUserAction = false;
+#pragma clang diagnostic pop
       }
       break;
     default:

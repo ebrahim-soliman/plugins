@@ -12,11 +12,11 @@ import 'util.dart';
 
 void main() {
   group('$CreateAllPluginsAppCommand', () {
-    CommandRunner<void> runner;
+    late CommandRunner<void> runner;
     FileSystem fileSystem;
-    Directory testRoot;
-    Directory packagesDir;
-    Directory appDir;
+    late Directory testRoot;
+    late Directory packagesDir;
+    late Directory appDir;
 
     setUp(() {
       // Since the core of this command is a call to 'flutter create', the test
@@ -28,7 +28,6 @@ void main() {
 
       final CreateAllPluginsAppCommand command = CreateAllPluginsAppCommand(
         packagesDir,
-        fileSystem,
         pluginsRoot: testRoot,
       );
       appDir = command.appDirectory;
@@ -42,11 +41,11 @@ void main() {
     });
 
     test('pubspec includes all plugins', () async {
-      createFakePlugin('plugina', packagesDirectory: packagesDir);
-      createFakePlugin('pluginb', packagesDirectory: packagesDir);
-      createFakePlugin('pluginc', packagesDirectory: packagesDir);
+      createFakePlugin('plugina', packagesDir);
+      createFakePlugin('pluginb', packagesDir);
+      createFakePlugin('pluginc', packagesDir);
 
-      await runner.run(<String>['all-plugins-app']);
+      await runCapturingPrint(runner, <String>['all-plugins-app']);
       final List<String> pubspec =
           appDir.childFile('pubspec.yaml').readAsLinesSync();
 
@@ -60,11 +59,11 @@ void main() {
     });
 
     test('pubspec has overrides for all plugins', () async {
-      createFakePlugin('plugina', packagesDirectory: packagesDir);
-      createFakePlugin('pluginb', packagesDirectory: packagesDir);
-      createFakePlugin('pluginc', packagesDirectory: packagesDir);
+      createFakePlugin('plugina', packagesDir);
+      createFakePlugin('pluginb', packagesDir);
+      createFakePlugin('pluginc', packagesDir);
 
-      await runner.run(<String>['all-plugins-app']);
+      await runCapturingPrint(runner, <String>['all-plugins-app']);
       final List<String> pubspec =
           appDir.childFile('pubspec.yaml').readAsLinesSync();
 
@@ -79,9 +78,9 @@ void main() {
     });
 
     test('pubspec is compatible with null-safe app code', () async {
-      createFakePlugin('plugina', packagesDirectory: packagesDir);
+      createFakePlugin('plugina', packagesDir);
 
-      await runner.run(<String>['all-plugins-app']);
+      await runCapturingPrint(runner, <String>['all-plugins-app']);
       final String pubspec =
           appDir.childFile('pubspec.yaml').readAsStringSync();
 
